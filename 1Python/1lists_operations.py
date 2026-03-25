@@ -12,3 +12,14 @@ while True:
         break
     
 print(f'L: {L}, mean L: {sum / 48}, median L: {(L[25] + L[26]) / 2}')
+
+counter = {}
+
+for x in L:
+    if x in counter:
+        counter[x] += 1
+    else:
+        counter[x] = 1
+
+for x, y in zip(counter.keys(), counter.values()):
+    print(f'Count {x}: {y}')
