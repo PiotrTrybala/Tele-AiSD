@@ -72,19 +72,20 @@ while True:
         print('Wygrał X!')
         break
     
-    if check_win(O):
-        print('Wygrał O!')
-        break
+    # if check_win(O):
+    #     print('Wygrał O!')
+    #     break
     
     if is_board_full():
         print('Remis! :(')
         
     print_board()
-    mark_symbol(O)
+    # mark_symbol(O)
+    mark_computer_sumbol(O)
     
-    if check_win(X):
-        print('Wygrał X!')
-        break
+    # if check_win(X):
+    #     print('Wygrał X!')
+    #     break
     
     if check_win(O):
         print('Wygrał O!')
