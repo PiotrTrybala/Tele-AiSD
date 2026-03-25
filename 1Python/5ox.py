@@ -1,3 +1,4 @@
+import random
 
 EMPTY = ' '
 X = 'x'
@@ -14,7 +15,12 @@ def print_board():
     print(f'|{board[6]}|{board[7]}|{board[8]}|')
     print('--------')
 
-
+def mark_computer_sumbol(c):
+    x = random.randint(1, 9)
+    while board[x] != EMPTY:
+        x = random.randint(1, 9)
+    board[x] = c
+    
 def mark_symbol(c):
     
     while True:
