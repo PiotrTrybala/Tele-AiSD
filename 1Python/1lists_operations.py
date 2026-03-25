@@ -11,6 +11,8 @@ while True:
     if len(L) == 48:
         break
     
+L = sorted(L)
+    
 print(f'L: {L}, mean L: {sum / 48}, median L: {(L[25] + L[26]) / 2}')
 
 counter = {}

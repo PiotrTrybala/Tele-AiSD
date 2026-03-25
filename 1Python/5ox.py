@@ -13,7 +13,28 @@ def print_board():
     print('--------')
     print(f'|{board[6]}|{board[7]}|{board[8]}|')
     print('--------')
+
+
+def mark_symbol(c):
     
+    while True:
+        player_input = input(f'Ruch {c} (x):')
+        try:
+            
+            x = int(player_input) - 1
+            if x < 0 or x > 8 or board[x] != EMPTY:
+                player_input = input('Podaj prawidłowy ruch: (x)')
+                x = int(player_input) - 1
+        
+            board[x] = c
+            break
+        except:
+            pass
+
+def is_board_full():
+    filled = sum(x for x in board if board != EMPTY)
+    return filled == 9 # board is full
+
 def check_win(c):
     
     # rows
@@ -35,24 +56,21 @@ def check_win(c):
 
     return False
     
+    
 
 while True:
-    pass
-    # print_board()
+    print_board()
+    mark_symbol(X)
+    print_board()
+    mark_symbol(O)
     
-    # # Add input validation
-    # player1 = input(f'{X}: Ruch (x.y) (1-3):')
+    if check_win(X):
+        print('Wygrał X!')
+        break
     
-    # x1, y1 = player1.split('.')
-    # x1, y1 = int(x1) - 1, int(y1) - 1
-    # if board[x1][y1] == EMPTY:
-    #     board[x1][y1] = O
+    if check_win(O):
+        print('Wygrał O!')
+        break
     
-    # print_board()
-    
-    # player2 = input(f'Ruch {O}:')
-    
-    # x2, y2 = player2.split('.')
-    # x2, y2 = int(x2) - 1, int(y2) - 1
-    # if board[x2][y2] == EMPTY:
-    #     board[x2][y2] = O
+    if is_board_full():
+        print('Remis')
