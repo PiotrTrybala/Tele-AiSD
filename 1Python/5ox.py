@@ -32,7 +32,7 @@ def mark_symbol(c):
             pass
 
 def is_board_full():
-    filled = sum(x for x in board if board != EMPTY)
+    filled = sum(1 for x in board if board != EMPTY)
     return filled == 9 # board is full
 
 def check_win(c):
@@ -61,6 +61,18 @@ def check_win(c):
 while True:
     print_board()
     mark_symbol(X)
+    
+    if check_win(X):
+        print('Wygrał X!')
+        break
+    
+    if check_win(O):
+        print('Wygrał O!')
+        break
+    
+    if is_board_full():
+        print('Remis! :(')
+        
     print_board()
     mark_symbol(O)
     
@@ -73,4 +85,4 @@ while True:
         break
     
     if is_board_full():
-        print('Remis')
+        print('Remis! :(')
