@@ -40,6 +40,21 @@ class BstNode:
     def find(self, x):
         return self._find(self, x)
 
+    def min(self):
+        cur = self
+        while cur.left:
+            cur = cur.left
+
+        return cur.value
+
+    def max(self):
+        cur = self.right
+        while cur.right:
+            cur = cur.right
+
+        return cur.value
+
+
     def _print(self, node, level=0, _left=True, prefix="", indent=""):
 
         dashes = '-' * level
@@ -75,32 +90,24 @@ class ListNode:
 class LinkedList:
 
     def __init__(self):
-        self.node = ListNode(0.0)
+        self.head = ListNode(0.0)
 
     def insert(self, x):
         limit = floor(x)
 
-        cur = self.node
+        new_node = ListNode(limit)
+        new_node.bst.insert(x)
+
+        cur = self.head
         prev = None
         while cur.next and cur.value < x:
-            # if prev:
-            #     print(f'x = {limit}, cur={cur.value} ({cur.value > x}, {cur.value == limit}); prev = {prev.value}')
-            # else:
-            #     print(f'cur = {cur.value}')
-
             if cur.value == limit:
                 break
             prev = cur
             cur = cur.next
-
-        # print("\n")
-
         if cur.value == limit:
             cur.bst.insert(x)
             return
-
-        new_node = ListNode(limit)
-        new_node.bst.insert(x)
 
         if cur.next:
             successor = cur
@@ -111,48 +118,70 @@ class LinkedList:
 
 
     def min(self, y):
-        pass
+
+        limit = floor(y)
+        cur = self.head
+        while cur.next and limit > 0:
+            cur = cur.next
+            limit -= 1
+
+        if not cur:
+            return -1
+
+        return cur.bst.min()
+
+
 
     def max(self, y):
-        pass
+        limit = floor(y)
+        cur = self.head
+        while cur.next and limit > 0:
+            cur = cur.next
+            limit -= 1
+
+        if not cur:
+            return -1
+
+        return cur.bst.max()
 
     def search(self, x):
-        pass
-
-    def print(self):
-        cur = self.node
-        while cur.next:
-            print(f'{cur.value} ', end="-> ")
+        limit = floor(x)
+        cur = self.head
+        while cur.next and cur.value < x:
+            if cur.value == limit:
+                break
             cur = cur.next
 
-        print("None")
+        if not cur:
+            return False
 
-# l = LinkedList()
-#
-# l.insert(1.3)
-# l.insert(9.3)
-# l.insert(1.6)
-# l.insert(4.99)
-# l.insert(7.8)
-# l.insert(3.7)
-# l.insert(4.0)
-# l.insert(7.9)
-# l.insert(7.6)
-# l.insert(7.3)
-# l.insert(7.7)
-#
-# l.print()
+        return cur.bst.find(x)
 
-bst = BstNode(4)
-bst.insert(2)
-bst.insert(6)
-bst.insert(1)
-bst.insert(3)
-bst.insert(5)
-bst.insert(7)
+    def print(self):
+        cur = self.head
+        while cur.next:
+            cur.bst.print()
+            cur = cur.next
 
+l = LinkedList()
 
-# bst.inorder_traversal()
-# bst.print()
+l.insert(1.3)
+l.insert(9.3)
+l.insert(1.6)
+l.insert(4.99)
+l.insert(7.8)
+l.insert(3.7)
+l.insert(4.0)
+l.insert(4.99)
+l.insert(5.01)
+l.insert(7.9)
+l.insert(7.7)
+l.insert(7.6)
+l.insert(7.3)
 
-bst.print()
+l.print()
+
+print(f'found 7.7: {l.search(7.7)}')
+print(f'found 100.0: {l.search(100.0)}')
+print(f'min: {l.min(2)}')
+print(f'max: {l.max(2)}')
