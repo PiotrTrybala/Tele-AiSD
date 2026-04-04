@@ -40,26 +40,27 @@ class BstNode:
     def find(self, x):
         return self._find(self, x)
 
-    def _print(self, node, level=0, prefix=""):
+    def _print(self, node, level=0, _left=True, prefix="", indent=""):
 
-
-        print(f"(level={level}, value={node.value}, prefix_length = {len(prefix)}, prefix = '{prefix}')")
         dashes = '-' * level
+
+        # print(f'value = {node.value}, prefix={prefix}')
+
         prefix = f'{prefix}{dashes}{node.value}'
-        print(prefix, end='')
+
+        print(indent, end='')
+        print('-' * level, end='')
+        print(node.value, end='')
 
         if node.left:
-            node.left._print(node.left, level + 1, prefix)
+            indent = ''
+            node.left._print(node.left, level + 1, prefix=prefix, indent=indent)
         else:
             print()
 
         if node.right:
-            spaces = ' ' * len(prefix)
-            print(f'spaces = {len(spaces)}')
-            new_prefix = f'{spaces}{node.value}'
-            # prefix = f'{spaces}{node.value}'
-            node.right._print(node.right, level + 1, new_prefix)
-
+            indent = ' ' * len(prefix)
+            node.right._print(node.right, level + 1, _left = False, prefix=prefix, indent=indent)
 
     def print(self):
         self._print(self)
@@ -144,11 +145,11 @@ class LinkedList:
 
 bst = BstNode(4)
 bst.insert(2)
-# bst.insert(6)
+bst.insert(6)
 bst.insert(1)
 bst.insert(3)
-# bst.insert(5)
-# bst.insert(7)
+bst.insert(5)
+bst.insert(7)
 
 
 # bst.inorder_traversal()
