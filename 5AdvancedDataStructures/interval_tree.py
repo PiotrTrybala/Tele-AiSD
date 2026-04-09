@@ -75,3 +75,13 @@ class IntervalTree:
             return -1
 
         return cur.bst.max()
+
+    def size(self):
+        size = 0
+
+        cur = self.head
+        while cur.next:
+            cur = cur.next
+            size += 1
+
+        return size
