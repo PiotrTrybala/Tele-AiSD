@@ -1,7 +1,13 @@
 
 import numpy as np
 
-class Circle:
+class Shape:
+    def area(self):
+        pass
+    def __str__(self):
+        pass
+
+class Circle(Shape):
     def __init__(self, r):
         self.r = r
 
@@ -11,7 +17,7 @@ class Circle:
     def __str__(self):
         return f'(area = {self.area()})'
 
-class Triangle:
+class Triangle(Shape):
 
     def __init__(self, a, h):
         self.a = a
@@ -23,7 +29,7 @@ class Triangle:
     def __str__(self):
         return f'(area = {self.area()})'
 
-class Square:
+class Square(Shape):
 
     def __init__(self, a):
         self.a = a
