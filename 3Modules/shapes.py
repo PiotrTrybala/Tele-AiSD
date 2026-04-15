@@ -40,9 +40,7 @@ class Triangle(Shape):
         s2 = a + c
         s3 = b + c
 
-        print(f'{s1 > c}, {c}, {s2 > b}, {b}, {s3 > a}, {a}')
-
-        return s1 > c or s2 > b or s3 > a 
+        return s1 > c and s2 > b and s3 > a 
     def area(self):
         p = (self.a + self.b + self.c) / 2
         return np.sqrt(p * (p - self.a) * (p - self.b) * (p - self.c))
