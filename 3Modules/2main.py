@@ -1,7 +1,7 @@
 
 from shapes import Triangle, Circle, Square
 
-triangle = Triangle(3.0, 5.5)
+triangle = Triangle(3.0, 5.5, 3.0)
 circle = Circle(5.0)
 square = Square(3.0)
 
