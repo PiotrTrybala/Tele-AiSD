@@ -1,19 +1,15 @@
 
-# Naive Pattern Searching
-
-"""
-    naive_search - perform Naive Pattern Searching
-    :text - text to search through
-    :pattern - text to look for in :text
-    :dims - dimensions (X, Y)
-"""
-# pattern - text to look for
-
 # alphabet - {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F}
+
+text = ""
+with open("patterns/1000_pattern.txt") as f:
+    text = f.read().replace('\n', '')
 
 # at - treat (i, j) as index in string
 def at(s, x, i, j):
     return s[i * x + j]
+
+# Naive Pattern Searching
 
 def naive_search_2d(txt, pattern, text_dims, pattern_dims):
     positions = []
@@ -42,17 +38,73 @@ def naive_search_2d(txt, pattern, text_dims, pattern_dims):
                 positions.append((i, j))
     return positions
 
-text = ""
+# naive_positions = naive_search_2d(text, "ABCB**C**", (1000, 1000), (3, 3))
+#
+# for pos in naive_positions:
+#     print(pos)
 
-with open("patterns/1000_pattern.txt") as f:
-    text = f.read().replace('\n', '')
 
-print(text)
-
-positions = naive_search_2d(text, "ABCB**C**", (1000, 1000), (3, 3))
-
-for pos in positions:
-    print(pos)
 
 # Rabin-Karp Pattern Searching
+
+# First, string Rabin-Karp
+
+D = 16 # alphabet length
+Q = 101 # modulus to reduce collisions
+
+def rk_search(txt, pattern):
+    # Length of the pattern
+    m = len(pat)
+
+    # Length of the text
+    n = len(txt)
+
+    # Hash value for pattern
+    p = 0
+
+    # Hash value for current window of text
+    t = 0
+
+    # High-order digit multiplier
+    h = 1
+
+    ans = []
+
+    # Precompute h = pow(d, m-1) % q
+    for i in range(m - 1):
+        h = (h * D) % Q
+
+    # Compute initial hash values for pattern and first window of text
+    for i in range(m):
+        p = (D * p + ord(pat[i])) % Q
+        t = (D * t + ord(txt[i])) % Q
+
+    # Slide the pattern over text one by one
+    for i in range(n - m + 1):
+
+        # If hash values match, check characters one by one
+        if p == t:
+            match = True
+            for j in range(m):
+                if txt[i + j] != pat[j]:
+                    match = False
+                    break
+            if match:
+                ans.append(i)
+
+        # Calculate hash value for the next window
+        if i < n - m:
+            t = (D * (t - ord(txt[i]) * h) + ord(txt[i + m])) % Q
+            if t < 0:
+                t += Q
+    return ans
+
+txt = "geeksforgeeks"
+pat = "geeks"
+res = rk_search(txt, pat)
+print(f"Rabin Karp: searching '{pat}' in '{txt}': {res}")
+
+# def rabin_karp_2d(txt, pattern, txt_dims, pattern_dims):
+#     pass
+
 
