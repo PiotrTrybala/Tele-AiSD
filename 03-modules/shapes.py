@@ -1,35 +1,61 @@
 
 import numpy as np
 
-class Circle:
+class Shape:
+    def area(self):
+        pass
+
+    def circumference(self):
+        pass
+
+    def __str__(self):
+        return f'(area = {self.area()}, circumfrence = {self.circumference()})'
+
+class Circle(Shape):
     def __init__(self, r):
+        super().__init__()
         self.r = r
 
     def area(self):
         return np.pi * np.square(self.r)
+    
+    def circumference(self):
+        return 2 * np.pi * self.r
 
-    def __str__(self):
-        return f'(area = {self.area()})'
+class Triangle(Shape):
 
-class Triangle:
+    def __init__(self, a, b, c):
+        super().__init__()
 
-    def __init__(self, a, h):
+        if not self.check_valid(a, b, c):
+            print(f'This triangle could not exist')
+            exit(1)
+
         self.a = a
-        self.h = h
+        self.b = b
+        self.c = c
 
+    def check_valid(self, a, b, c):
+        s1 = a + b
+        s2 = a + c
+        s3 = b + c
+
+        return s1 > c and s2 > b and s3 > a 
     def area(self):
-        return self.a * self.h / 2
+        p = (self.a + self.b + self.c) / 2
+        return np.sqrt(p * (p - self.a) * (p - self.b) * (p - self.c))
 
-    def __str__(self):
-        return f'(area = {self.area()})'
+    def circumference(self):
+        return self.a + self.b + self.c
 
-class Square:
+class Square(Shape):
 
     def __init__(self, a):
+        super().__init__()
         self.a = a
 
     def area(self):
         return np.square(self.a)
-
-    def __str__(self):
-        return f'(area = {self.area()})'
+    
+    def circumference(self):
+        return 4 * self.a

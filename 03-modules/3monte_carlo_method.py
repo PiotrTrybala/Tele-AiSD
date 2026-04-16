@@ -1,17 +1,17 @@
 import numpy as np
 
-def circle_metric(x, y, r):
+def is_inside_circle(x, y, r):
     return np.sqrt(np.square(x) + np.square(y)) <= r
 
 
 def circle_monte_carlo(r, n = 10):
     c = 0
-    for i in range(n):
+    for _ in range(n):
 
         x = np.random.uniform(-r, r)
         y = np.random.uniform(-r, r)
 
-        if circle_metric(x, y, r):
+        if is_inside_circle(x, y, r):
             c += 1
 
     in_circle = c / n
@@ -20,10 +20,12 @@ def circle_monte_carlo(r, n = 10):
 
     print(f'n = {n}, area = {area:.3f}, expected = {expected:.3f}, error = {abs(area - expected):.3f}', flush=True)
 
+    return area
+
 def integral_monte_carlo(a, b, n = 10):
 
     c = 0
-    for i in range(n):
+    for _ in range(n):
 
         x = np.random.uniform(a, b)
         y = np.random.uniform(-1, 1)
@@ -42,15 +44,23 @@ def integral_monte_carlo(a, b, n = 10):
 
     print(f'n = {n}, area = {area:.3f}, expected = {expected:.3f}, error = {abs(area - expected):.3f}', flush=True)
 
+    return area
+
+# calculating circle area using Monte Carlo Method
+
 circle_monte_carlo(3, 10)
 circle_monte_carlo(3, 100)
 circle_monte_carlo(3, 1000)
 circle_monte_carlo(3, 10000)
-circle_monte_carlo(3, 100000)
+
+print(f'Circle -> final result = {circle_monte_carlo(3, 10000)}')
+
+# calculating integral of sin(x) in range [0, 2] using Monte Carlo Method
 
 integral_monte_carlo(0, 2, 10)
 integral_monte_carlo(0, 2, 100)
 integral_monte_carlo(0, 2, 100)
 integral_monte_carlo(0, 2, 1000)
-integral_monte_carlo(0, 2, 10000)
+
+print(f'Integral -> final result = {integral_monte_carlo(0, 2, 10000)}')
 
