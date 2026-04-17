@@ -1,3 +1,4 @@
+import time
 
 # alphabet - {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F}
 
@@ -25,7 +26,7 @@ def naive_search_2d(txt, pattern, text_dims, pattern_dims):
                     txt_char = at(txt, text_cols, i + pi, j + pj, )
                     pat_char = at(pattern, pattern_cols, pi, pj)
 
-                    print(f'({i}, {j}) -> ({i + pi}, {j + pj}, {txt_char}, {pat_char})')
+                    # print(f'({i}, {j}) -> ({i + pi}, {j + pj}, {txt_char}, {pat_char})')
 
                     if pat_char != '*' and pat_char != txt_char:
                         match = False
@@ -49,62 +50,115 @@ def naive_search_2d(txt, pattern, text_dims, pattern_dims):
 
 # First, string Rabin-Karp
 
-D = 16 # alphabet length
-Q = 101 # modulus to reduce collisions
+# 2D Rabin-Karp Pattern Searching - without wildcards
+def rk2_search(txt, pattern, txt_dims, pattern_dims):
 
-def rk_search(txt, pattern):
-    # Length of the pattern
-    m = len(pat)
+    txt_x, txt_y = txt_dims
+    pat_x, pat_y = pattern_dims
+    d1, d2 = 256, 257 # Base radix
+    q = 10**9 + 7 # A large prime
 
-    # Length of the text
-    n = len(txt)
+    positions = []
 
-    # Hash value for pattern
-    p = 0
+    h1 = pow(d1, pat_y - 1, q)
+    h2 = pow(d2, pat_x - 1, q)
 
-    # Hash value for current window of text
-    t = 0
+    # Stage 1: Hash pattern rows
+    pat_row_hashes = []
+    for i in range(pat_x):
+        row_h = 0
+        for j in range(pat_y):
+            row_h = (d1 * row_h + ord(pattern[i * pat_y + j])) % q
+        pat_row_hashes.append(row_h)
 
-    # High-order digit multiplier
-    h = 1
+    p_hash = 0
+    for h in pat_row_hashes:
+        p_hash = (d2 * p_hash + h) % q
 
-    ans = []
+    row_hashes = [[0] * (txt_y - pat_y + 1) for _ in range(txt_y)]
 
-    # Precompute h = pow(d, m-1) % q
-    for i in range(m - 1):
-        h = (h * D) % Q
+    for i in range(txt_x):
+        current_row_h = 0
+        for j in range(pat_y):
+            current_row_h = (d1 * current_row_h + ord(txt[i * txt_y + j])) % q
+        row_hashes[i][0] = current_row_h
 
-    # Compute initial hash values for pattern and first window of text
-    for i in range(m):
-        p = (D * p + ord(pat[i])) % Q
-        t = (D * t + ord(txt[i])) % Q
+        for j in range(1, txt_y - pat_y + 1):
+            prev_char = ord(txt[i * txt_y + (j - 1)])
+            next_char = ord(txt[i * txt_y + (j + pat_y - 1)])
+            current_row_h = (d1 * (current_row_h - prev_char * h1) + next_char) % q
+            row_hashes[i][j] = (current_row_h + q) % q
 
-    # Slide the pattern over text one by one
-    for i in range(n - m + 1):
+    for j in range(txt_y - pat_y + 1):
+        current_col_h = 0
 
-        # If hash values match, check characters one by one
-        if p == t:
-            match = True
-            for j in range(m):
-                if txt[i + j] != pat[j]:
-                    match = False
-                    break
-            if match:
-                ans.append(i)
+        for i in range(pat_x):
+            current_col_h = (d2 * current_col_h + row_hashes[i][j]) % q
 
-        # Calculate hash value for the next window
-        if i < n - m:
-            t = (D * (t - ord(txt[i]) * h) + ord(txt[i + m])) % Q
-            if t < 0:
-                t += Q
-    return ans
+        if current_col_h == p_hash:
+            positions.append((0, j))
 
-txt = "geeksforgeeks"
-pat = "geeks"
-res = rk_search(txt, pat)
-print(f"Rabin Karp: searching '{pat}' in '{txt}': {res}")
+        for i in range(1, txt_x - pat_x + 1):
+            prev_row_h = row_hashes[i - 1][j]
+            next_row_h = row_hashes[i + pat_x - 1][j]
+            current_col_h = (d2 * (current_col_h - prev_row_h * h2) + next_row_h) % q
+            current_col_h = (current_col_h + q) % q
 
-# def rabin_karp_2d(txt, pattern, txt_dims, pattern_dims):
-#     pass
+            if current_col_h == p_hash:
+                positions.append((i, j))
 
+    return positions
 
+s = time.time()
+print(naive_search_2d(text, "ABCB**C**", (1000, 1000), (3, 3)))
+print(f'naive search execution time: {time.time() - s:.3f}(s)')
+
+# Hydrid Approach to Rabin-Karp in 2d
+
+def verify_wildcard(txt, pattern, i, j, text_dims, pattern_dims):
+
+    txt_x, txt_y= text_dims
+    pat_x, pat_y = pattern_dims
+    for pi in range(pat_x):
+        for pj in range(pat_y):
+            p_char = pattern[pi * pat_y + pj]
+            if p_char != '*' and txt[(pi + i) * txt_y + (pj + j)] != p_char:
+                return False
+    return True
+
+def rk2_wildcard_search(txt, pattern, text_dims, pattern_dims):
+
+    txt_x, txt_y = text_dims
+    pat_x, pat_y = pattern_dims
+
+    d, q = 256, 10**9 + 7
+    h = pow(d, pat_y - 1, q)
+
+    pat_first_row_hash = 0
+    for j in range(pat_y):
+        pat_first_row_hash = (d * pat_first_row_hash + ord(pattern[j])) % q
+
+    positions = []
+
+    for i in range(txt_x - pat_x + 1):
+        current_row_h = 0
+
+        for j in range(pat_y):
+            current_row_h = (d * current_row_h + ord(txt[i * txt_y + j])) % q
+
+        for j in range(txt_y - pat_y + 1):
+            if current_row_h == pat_first_row_hash:
+                if verify_wildcard(txt, pattern, i, j, text_dims, pattern_dims):
+                    positions.append((i, j))
+
+            if j < txt_y - pat_y:
+                prev_char = ord(txt[i * txt_y + j])
+                next_char = ord(txt[i * txt_y + j + pat_y])
+                current_row_h = (d * (current_row_h - prev_char * h) + next_char) % q
+                current_row_h %= q
+
+    return positions
+
+s = time.time()
+print(rk2_wildcard_search(text, "ABCB**C**", (1000, 1000), (3, 3)))
+print(f'rk2_wildcard_search execution time: {time.time() - s:.3f}(s)')
